@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mijn App">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Mijn App</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <style>
+    :root {
+      --bg: #07111f;
+      --card: rgba(255,255,255,.07);
+      --line: rgba(255,255,255,.12);
+      --text: #f4f7fb;
+      --muted: #9aa8bd;
+      --accent: #38bdf8;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Segoe UI, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(56,189,248,.18), transparent 32%),
+        radial-gradient(circle at bottom left, rgba(99,102,241,.2), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      padding: calc(env(safe-area-inset-top) + 24px) 20px calc(env(safe-area-inset-bottom) + 24px);
+    }
+    .wrap { max-width: 430px; margin: 0 auto; }
+    .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    h1 { margin: 0; font-size: 2rem; letter-spacing: -.03em; }
+    .date { color: var(--muted); margin-top: 6px; }
+    .badge {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .install {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(56,189,248,.12);
+      border: 1px solid rgba(56,189,248,.28);
+      line-height: 1.45;
+    }
+    .install.show { display: block; }
+    .grid { display: grid; gap: 14px; margin-top: 22px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      backdrop-filter: blur(16px);
+    }
+    .card h2 { margin: 0 0 12px; font-size: 1rem; }
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 0;
+      outline: none;
+      resize: none;
+      color: var(--text);
+      background: rgba(0,0,0,.22);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+    }
+    textarea { min-height: 120px; }
+    .row { display: flex; gap: 8px; }
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      font-weight: 650;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: white;
+    }
+    .list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+    .list li {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .list li.done span { text-decoration: line-through; color: var(--muted); }
+    .list button {
+      margin-left: auto;
+      background: transparent;
+      color: var(--muted);
+      padding: 4px 8px;
+    }
+    .hint { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div>
+        <h1 id="hello">Hallo</h1>
+        <p class="date" id="today"></p>
+      </div>
+      <div class="badge" id="mode">Webapp</div>
+    </header>
+
+    <section class="install" id="install">
+      Zet deze pagina op je iPhone als app: tik in Safari op het deel-icoon en kies <strong>Zet op beginscherm</strong>.
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Notitie</h2>
+        <textarea id="note" placeholder="Schrijf iets voor later…"></textarea>
+      </article>
+
+      <article class="card">
+        <h2>Taken</h2>
+        <form class="row" id="todo-form">
+          <input type="text" id="todo-input" placeholder="Nieuwe taak" autocomplete="off">
+          <button type="submit">Toevoegen</button>
+        </form>
+        <ul class="list" id="todos"></ul>
+      </article>
+    </section>
+
+    <p class="hint">
+      Startversie van je webapp. Zeg wat je erin wilt en dan bouw ik het verder uit.
+    </p>
+  </main>
+
+  <script>
+    const hello = document.getElementById("hello");
+    const today = document.getElementById("today");
+    const mode = document.getElementById("mode");
+    const install = document.getElementById("install");
+    const note = document.getElementById("note");
+    const form = document.getElementById("todo-form");
+    const input = document.getElementById("todo-input");
+    const list = document.getElementById("todos");
+
+    const hour = new Date().getHours();
+    hello.textContent = hour < 12 ? "Goedemorgen" : hour < 18 ? "Goedemiddag" : "Goedenavond";
+    today.textContent = new Date().toLocaleDateString("nl-BE", {
+      weekday: "long", day: "numeric", month: "long"
+    });
+
+    const standalone = window.matchMedia("(display-mode: standalone)").matches
+      || window.navigator.standalone === true;
+    mode.textContent = standalone ? "Op beginscherm" : "In Safari";
+    if (!standalone) install.classList.add("show");
+
+    note.value = localStorage.getItem("mijn-app-note") || "";
+    note.addEventListener("input", () => localStorage.setItem("mijn-app-note", note.value));
+
+    let todos = JSON.parse(localStorage.getItem("mijn-app-todos") || "[]");
+
+    function save() {
+      localStorage.setItem("mijn-app-todos", JSON.stringify(todos));
+      render();
+    }
+
+    function render() {
+      list.innerHTML = "";
+      todos.forEach((todo, index) => {
+        const li = document.createElement("li");
+        if (todo.done) li.classList.add("done");
+        li.innerHTML = `<input type="checkbox" ${todo.done ? "checked" : ""}><span></span><button type="button">Verwijder</button>`;
+        li.querySelector("span").textContent = todo.text;
+        li.querySelector("input").addEventListener("change", () => {
+          todos[index].done = !todos[index].done;
+          save();
+        });
+        li.querySelector("button").addEventListener("click", () => {
+          todos.splice(index, 1);
+          save();
+        });
+        list.appendChild(li);
+      });
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      todos.unshift({ text, done: false });
+      input.value = "";
+      save();
+    });
+
+    render();
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js");
+    }
+  </script>
+</body>
+</html>
