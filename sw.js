@@ -1,4 +1,4 @@
-const CACHE = "hartenjagen-v1";
+const CACHE = "hartenjagen-v2";
 const ASSETS = ["./", "./index.html", "./game.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {
