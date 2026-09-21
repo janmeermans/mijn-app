@@ -1,13 +1,13 @@
 {
-  "name": "Mijn App",
-  "short_name": "Mijn App",
-  "description": "Persoonlijke webapp voor op het iPhone-beginscherm.",
+  "name": "Hartenjagen",
+  "short_name": "Harten",
+  "description": "Hartenjagen tegen 3 computerspelers.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#07111f",
-  "theme_color": "#07111f",
+  "background_color": "#0b1d12",
+  "theme_color": "#0b1d12",
   "lang": "nl",
   "icons": [
     {
