@@ -2,206 +2,135 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#07111f">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0b1d12">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Mijn App">
+  <meta name="apple-mobile-web-app-title" content="Hartenjagen">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>Mijn App</title>
+  <title>Hartenjagen</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #07111f;
-      --card: rgba(255,255,255,.07);
-      --line: rgba(255,255,255,.12);
-      --text: #f4f7fb;
-      --muted: #9aa8bd;
-      --accent: #38bdf8;
+      --felt: #14532d;
+      --felt-dark: #0b1d12;
+      --ink: #f8fafc;
+      --muted: #86efac;
+      --gold: #fbbf24;
+      --card: #fff7ed;
     }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0; height: 100%; overflow: hidden;
+      background: var(--felt-dark); color: var(--ink);
+      font-family: "Press Start 2P", ui-monospace, monospace;
+    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Segoe UI, sans-serif;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    #app {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto auto auto;
       background:
-        radial-gradient(circle at top right, rgba(56,189,248,.18), transparent 32%),
-        radial-gradient(circle at bottom left, rgba(99,102,241,.2), transparent 28%),
-        var(--bg);
-      color: var(--text);
-      padding: calc(env(safe-area-inset-top) + 24px) 20px calc(env(safe-area-inset-bottom) + 24px);
+        repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 4px, transparent 4px 8px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 4px, transparent 4px 8px),
+        radial-gradient(circle at 50% 35%, #166534, var(--felt-dark) 70%);
+      image-rendering: pixelated;
     }
-    .wrap { max-width: 430px; margin: 0 auto; }
-    .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-    h1 { margin: 0; font-size: 2rem; letter-spacing: -.03em; }
-    .date { color: var(--muted); margin-top: 6px; }
-    .badge {
-      border: 1px solid var(--line);
-      background: var(--card);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
+    header {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; padding: 8px 8px 4px;
     }
-    .install {
-      display: none;
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(56,189,248,.12);
-      border: 1px solid rgba(56,189,248,.28);
-      line-height: 1.45;
+    .score {
+      background: #052e16; border: 3px solid #022c22; box-shadow: 3px 3px 0 #022c22;
+      padding: 6px 4px; text-align: center; min-width: 0;
     }
-    .install.show { display: block; }
-    .grid { display: grid; gap: 14px; margin-top: 22px; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 16px;
-      backdrop-filter: blur(16px);
+    .score b { display: block; font-size: 8px; color: var(--muted); margin-bottom: 4px; }
+    .score span { font-size: 12px; color: var(--gold); }
+    .score.you { border-color: var(--gold); }
+    #table { position: relative; min-height: 0; }
+    .seat { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    #north { top: 6px; left: 50%; transform: translateX(-50%); }
+    #west { left: 6px; top: 50%; transform: translateY(-50%); }
+    #east { right: 6px; top: 50%; transform: translateY(-50%); }
+    .who { font-size: 8px; color: var(--muted); text-shadow: 2px 2px 0 #022c22; }
+    .pile {
+      width: 34px; height: 48px;
+      background: repeating-linear-gradient(45deg, #1e3a8a 0 4px, #2563eb 4px 8px);
+      border: 3px solid #0f172a; box-shadow: 3px 3px 0 #022c22;
     }
-    .card h2 { margin: 0 0 12px; font-size: 1rem; }
-    textarea, input[type="text"] {
-      width: 100%;
-      border: 0;
-      outline: none;
-      resize: none;
-      color: var(--text);
-      background: rgba(0,0,0,.22);
-      border-radius: 14px;
-      padding: 12px 14px;
-      font: inherit;
+    .count { font-size: 8px; color: var(--gold); }
+    #trick {
+      position: absolute; inset: 22% 18% 18%;
+      display: grid;
+      grid-template-areas: ". n ." "w . e" ". s .";
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: 1fr auto 1fr;
+      place-items: center;
     }
-    textarea { min-height: 120px; }
-    .row { display: flex; gap: 8px; }
+    #slot-n { grid-area: n; } #slot-w { grid-area: w; } #slot-e { grid-area: e; } #slot-s { grid-area: s; }
+    .pcard, .hcard {
+      width: 46px; height: 64px; background: var(--card);
+      border: 3px solid #111827; box-shadow: 3px 3px 0 #022c22;
+      color: #111827; display: flex; flex-direction: column; justify-content: space-between;
+      padding: 3px 4px 2px; font-size: 10px; user-select: none;
+    }
+    .pcard.red, .hcard.red { color: #be123c; }
+    .pcard .big, .hcard .big { text-align: center; font-size: 16px; line-height: 1; }
+    #status {
+      min-height: 34px; padding: 0 10px; font-size: 8px; line-height: 1.5;
+      color: #ecfccb; text-align: center; text-shadow: 2px 2px 0 #022c22;
+    }
+    #hand { height: 92px; position: relative; margin: 0 6px; }
+    .hcard { position: absolute; bottom: 0; width: 50px; height: 72px; transition: transform .12s steps(3); }
+    .hcard.on { transform: translateY(-16px); outline: 3px solid var(--gold); }
+    .hcard.off { opacity: .38; filter: grayscale(.4); }
+    #bar { display: flex; gap: 8px; padding: 8px 10px 12px; }
     button {
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font: inherit;
-      font-weight: 650;
-      background: linear-gradient(135deg, #38bdf8, #6366f1);
-      color: white;
+      flex: 1; font: inherit; font-size: 9px; color: #111827; background: var(--gold);
+      border: 3px solid #111827; box-shadow: 3px 3px 0 #022c22; padding: 12px 8px;
     }
-    .list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
-    .list li {
-      display: flex; align-items: center; gap: 10px;
-      background: rgba(0,0,0,.18);
-      border-radius: 14px;
-      padding: 10px 12px;
+    button:disabled { background: #64748b; color: #e2e8f0; }
+    button.ghost { background: #86efac; }
+    #overlay {
+      position: fixed; inset: 0; background: rgba(2, 12, 8, .82);
+      display: none; align-items: center; justify-content: center; padding: 18px; z-index: 20;
     }
-    .list li.done span { text-decoration: line-through; color: var(--muted); }
-    .list button {
-      margin-left: auto;
-      background: transparent;
-      color: var(--muted);
-      padding: 4px 8px;
+    #overlay.show { display: flex; }
+    .panel {
+      width: min(360px, 100%); background: #052e16; border: 4px solid #fbbf24;
+      box-shadow: 6px 6px 0 #022c22; padding: 16px; text-align: center;
     }
-    .hint { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 18px; }
+    .panel h1 { font-size: 14px; margin: 0 0 12px; color: var(--gold); }
+    .panel p { font-size: 8px; line-height: 1.7; color: #d9f99d; }
+    .rows { display: grid; gap: 6px; margin: 12px 0; text-align: left; font-size: 8px; }
+    .rows div { display: flex; justify-content: space-between; }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <header class="top">
-      <div>
-        <h1 id="hello">Hallo</h1>
-        <p class="date" id="today"></p>
+  <div id="app">
+    <header id="scores"></header>
+    <div id="table">
+      <div class="seat" id="north"><div class="who">NOORD</div><div class="pile"></div><div class="count" id="n-count"></div></div>
+      <div class="seat" id="west"><div class="who">WEST</div><div class="pile"></div><div class="count" id="w-count"></div></div>
+      <div class="seat" id="east"><div class="who">OOST</div><div class="pile"></div><div class="count" id="e-count"></div></div>
+      <div id="trick">
+        <div id="slot-n"></div><div id="slot-w"></div><div id="slot-e"></div><div id="slot-s"></div>
       </div>
-      <div class="badge" id="mode">Webapp</div>
-    </header>
-
-    <section class="install" id="install">
-      Zet deze pagina op je iPhone als app: tik in Safari op het deel-icoon en kies <strong>Zet op beginscherm</strong>.
-    </section>
-
-    <section class="grid">
-      <article class="card">
-        <h2>Notitie</h2>
-        <textarea id="note" placeholder="Schrijf iets voor later…"></textarea>
-      </article>
-
-      <article class="card">
-        <h2>Taken</h2>
-        <form class="row" id="todo-form">
-          <input type="text" id="todo-input" placeholder="Nieuwe taak" autocomplete="off">
-          <button type="submit">Toevoegen</button>
-        </form>
-        <ul class="list" id="todos"></ul>
-      </article>
-    </section>
-
-    <p class="hint">
-      Startversie van je webapp. Zeg wat je erin wilt en dan bouw ik het verder uit.
-    </p>
-  </main>
-
-  <script>
-    const hello = document.getElementById("hello");
-    const today = document.getElementById("today");
-    const mode = document.getElementById("mode");
-    const install = document.getElementById("install");
-    const note = document.getElementById("note");
-    const form = document.getElementById("todo-form");
-    const input = document.getElementById("todo-input");
-    const list = document.getElementById("todos");
-
-    const hour = new Date().getHours();
-    hello.textContent = hour < 12 ? "Goedemorgen" : hour < 18 ? "Goedemiddag" : "Goedenavond";
-    today.textContent = new Date().toLocaleDateString("nl-BE", {
-      weekday: "long", day: "numeric", month: "long"
-    });
-
-    const standalone = window.matchMedia("(display-mode: standalone)").matches
-      || window.navigator.standalone === true;
-    mode.textContent = standalone ? "Op beginscherm" : "In Safari";
-    if (!standalone) install.classList.add("show");
-
-    note.value = localStorage.getItem("mijn-app-note") || "";
-    note.addEventListener("input", () => localStorage.setItem("mijn-app-note", note.value));
-
-    let todos = JSON.parse(localStorage.getItem("mijn-app-todos") || "[]");
-
-    function save() {
-      localStorage.setItem("mijn-app-todos", JSON.stringify(todos));
-      render();
-    }
-
-    function render() {
-      list.innerHTML = "";
-      todos.forEach((todo, index) => {
-        const li = document.createElement("li");
-        if (todo.done) li.classList.add("done");
-        li.innerHTML = `<input type="checkbox" ${todo.done ? "checked" : ""}><span></span><button type="button">Verwijder</button>`;
-        li.querySelector("span").textContent = todo.text;
-        li.querySelector("input").addEventListener("change", () => {
-          todos[index].done = !todos[index].done;
-          save();
-        });
-        li.querySelector("button").addEventListener("click", () => {
-          todos.splice(index, 1);
-          save();
-        });
-        list.appendChild(li);
-      });
-    }
-
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const text = input.value.trim();
-      if (!text) return;
-      todos.unshift({ text, done: false });
-      input.value = "";
-      save();
-    });
-
-    render();
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js");
-    }
-  </script>
+    </div>
+    <div id="status"></div>
+    <div id="hand"></div>
+    <div id="bar">
+      <button class="ghost" id="btn-new">NIEUW</button>
+      <button id="btn-act" disabled>SPEEL</button>
+    </div>
+  </div>
+  <div id="overlay"><div class="panel" id="panel"></div></div>
+  <script src="./game.js"></script>
+  <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");</script>
 </body>
 </html>
