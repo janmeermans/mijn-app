@@ -1,22 +1,13 @@
-# Mijn App
+# Hartenjagen
 
-Publieke webapp voor op het iPhone-beginscherm.
+Pixel-webapp voor iPhone: hartenjagen tegen 3 computerspelers.
 
-- Repo: https://github.com/janmeermans/mijn-app
-- Pagina: https://janmeermans.github.io/mijn-app/
+Pagina: https://janmeermans.github.io/mijn-app/
 
-## GitHub Pages aanzetten (eenmalig)
+## Spel
 
-1. Open https://github.com/janmeermans/mijn-app/settings/pages
-2. Bij **Source** kies **Deploy from a branch**
-3. Branch: **main**, map: **/ (root)**
-4. Save
-
-Na 1 tot 2 minuten werkt de link hierboven.
-
-## Op iPhone zetten
-
-1. Open de pagina in **Safari**
-2. Tik op het deel-icoon
-3. Kies **Zet op beginscherm**
-4. Tik op **Voeg toe**
+- Jij tegen WEST, NOORD en OOST
+- Harten = 1 punt, vrouw schoppen = 13
+- Alle 26 punten = maan schieten
+- Laagste score wint bij 100
+- Passen roteert: links, rechts, over, houden
