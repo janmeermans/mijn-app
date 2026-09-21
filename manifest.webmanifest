@@ -1,0 +1,20 @@
+{
+  "name": "Mijn App",
+  "short_name": "Mijn App",
+  "description": "Persoonlijke webapp voor op het iPhone-beginscherm.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "lang": "nl",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
